@@ -1,4 +1,4 @@
-import java.util.Random;
+// import java.util.Random;
 import java.util.Scanner;
 // one player vs computer
 public class MiniProject1 {
@@ -13,7 +13,8 @@ public class MiniProject1 {
                 break;
             } 
             // ComputerMove
-            ComputerMove(board);
+            // ComputerMove(board);
+            compMove(board);
             if(isGameFinished(board,'0')){
                 break;
             } 
@@ -60,18 +61,32 @@ public class MiniProject1 {
         System.out.println("The Game is ended in tie");
         return true;
     }
-    private static void ComputerMove(char[][] board) {
-        Random rand = new Random();
-        int computerMove;
-        while (true) {
-            computerMove = rand.nextInt(9) + 1;
-            if (isValidMove(board, Integer.toString(computerMove))) {
+
+    private static void compMove(char[][] board){
+        
+        int[] Cmoves = {1,3,7,9,5,2,4,6,8};
+        int computerMove = 0;
+        for(int move:Cmoves){
+            computerMove = move;
+            if(isValidMove(board,Integer.toString(computerMove))){
                 break;
             }
         }
         System.out.println("Computer chooses " + computerMove);
-        placeMove(board,Integer.toString(computerMove),'0');
+        placeMove(board, Integer.toString(computerMove), '0');
     }
+    // private static void ComputerMove(char[][] board) {
+    //     Random rand = new Random();
+    //     int computerMove;
+    //     while (true) {
+    //         computerMove = rand.nextInt(9) + 1;
+    //         if (isValidMove(board, Integer.toString(computerMove))) {
+    //             break;
+    //         }
+    //     }
+    //     System.out.println("Computer chooses " + computerMove);
+    //     placeMove(board,Integer.toString(computerMove),'0');
+    // }
     private static void placeMove(char[][] board,String position,char symbol){
         switch (position) {
             case "1":
