@@ -1,59 +1,64 @@
-// import java.util.Random;
+import java.util.Random;
 import java.util.Scanner;
 // one player vs computer
 public class MiniProject1 {
     public static void main(String[] args) {
-        char board[][] = { { ' ', ' ', ' ' },{ ' ', ' ', ' ' },{ ' ', ' ', ' ' } };
+        char board[][] = { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
         Scanner sc = new Scanner(System.in);
-        while(true){
+        while (true) {
             // PlayerMove
             PlayerMove(board, sc);
             // Logic to check winner or isGameOver
-            if(isGameFinished(board,'X')){
+            if (isGameFinished(board, 'X')) {
                 break;
-            } 
+            }
             // ComputerMove
             // ComputerMove(board);
-            compMove(board);
-            if(isGameFinished(board,'0')){
+            ComputerMove(board);
+            if (isGameFinished(board, '0')) {
                 break;
-            } 
+            }
             printBoard(board);
         }
         printBoard(board);
     }
-    private static boolean checkWinner(char[][] board,char symbol){
-        // Check  each row,each col and diagonals
-        if(board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol ||
-           board[1][0] == symbol && board[1][1] == symbol && board[1][2] == symbol ||
-           board[2][0] == symbol && board[2][1] == symbol && board[2][2] == symbol ||
 
-           board[0][0] == symbol && board[1][0] == symbol && board[2][0] == symbol ||
-           board[0][1] == symbol && board[1][1] == symbol && board[2][1] == symbol ||
-           board[0][2] == symbol && board[1][2] == symbol && board[2][2] == symbol ||
-           
-           board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol ||
-           board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol){
+    private static boolean checkWinner(char[][] board, char symbol) {
+        // Check each row,each col and diagonals
+        if (board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol ||
+                board[1][0] == symbol && board[1][1] == symbol && board[1][2] == symbol ||
+                board[2][0] == symbol && board[2][1] == symbol && board[2][2] == symbol ||
+
+                board[0][0] == symbol && board[1][0] == symbol && board[2][0] == symbol ||
+                board[0][1] == symbol && board[1][1] == symbol && board[2][1] == symbol ||
+                board[0][2] == symbol && board[1][2] == symbol && board[2][2] == symbol ||
+
+                board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol ||
+                board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol) {
             return true;
         }
         return false;
     }
-    private static boolean isGameFinished(char[][] board,char symbol){
-        // Check  each row,each col and diagonals
-        if(checkWinner(board,symbol)){
-            if(symbol == 'X'){
+
+    private static boolean isGameFinished(char[][] board, char symbol) {
+        // Check each row,each col and diagonals
+        if (checkWinner(board, symbol)) {
+            if (symbol == 'X') {
+                System.out.println("--------------");
                 System.out.println("Player Wins");
+                System.out.println("--------------");
                 return true;
-            }
-            else if(symbol == '0'){
-                System.out.println("Computr Wins");
+            } else if (symbol == '0') {
+                System.out.println("--------------");
+                System.out.println("Computer Wins");
+                System.out.println("--------------");
                 return true;
             }
         }
         // check if the board is full
-        for(int i = 0; i < board.length; i++){
-            for(int j = 0; j < board[i].length; j++){
-                if(board[i][j] == ' '){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == ' ') {
                     return false;
                 }
             }
@@ -62,32 +67,158 @@ public class MiniProject1 {
         return true;
     }
 
-    private static void compMove(char[][] board){
-        
-        int[] Cmoves = {1,3,7,9,5,2,4,6,8};
-        int computerMove = 0;
-        for(int move:Cmoves){
-            computerMove = move;
-            if(isValidMove(board,Integer.toString(computerMove))){
+    private static boolean rowWise(char[][] board, int[][] place, char symbol) {
+        int count = 0;
+        int Move = 0;
+        for (int i = 0; i < board.length; i++) {
+            count = 0;
+            Move = 0;
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == symbol) {
+                    count++;
+                } else if (board[i][j] == ' ') {
+                    Move = place[i][j];
+                }
+            }
+            if (count == 2 && Move != 0) {
                 break;
             }
         }
+        if (count == 2 && Move != 0) {
+            // System.out.println("Row Wise");
+            // System.out.println("Computer Chooses " + Move);
+            placeMove(board, Integer.toString(Move), '0');
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean colWise(char[][] board, int[][] place, char symbol) {
+        int count = 0;
+        int Move = 0;
+        for (int i = 0; i < board.length; i++) {
+            count = 0;
+            Move = 0;
+            for (int j = 0; j < board.length; j++) {
+                if (board[j][i] == symbol) {
+                    count++;
+                } else if (board[j][i] == ' ') {
+                    Move = place[j][i];
+                }
+            }
+            if (count == 2 && Move != 0) {
+                break;
+            }
+        }
+        if (count == 2 && Move != 0) {
+            // System.out.println("Col Wise");
+            // System.out.println("Computer Chooses " + Move);
+            placeMove(board, Integer.toString(Move), '0');
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isLeftDiagonal(char[][] board, int[][] place, char symbol) {
+        // left Daigonal
+        int count = 0;
+        int Move = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i][i] == symbol) {
+                count++;
+            } else if (board[i][i] == ' ') {
+                Move = place[i][i];
+            }
+        }
+        if (count == 2 && Move != 0) {
+            // System.out.println("LD Wise");
+            // System.out.println("Computer Chooses " + Move);
+            placeMove(board, Integer.toString(Move), '0');
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean rightDiagonal(char[][] board, int[][] place, char symbol) {
+        int count = 0;
+        int Move = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (i + j == board.length - 1) {
+                    if (board[i][j] == symbol) {
+                        count++;
+                    } else if (board[i][j] == ' ') {
+                        Move = place[i][j];
+                    }
+                }
+                if (count == 2 && Move != 0) {
+                    break;
+                }
+            }
+        }
+        if (count == 2 && Move != 0) {
+            // System.out.println("RD Wise");
+            // System.out.println("Computer Chooses " + Move);
+            placeMove(board, Integer.toString(Move), '0');
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isDefend(char[][] board, int[][] place) {
+        if (isLeftDiagonal(board, place, 'X')) {
+            return true;
+        } else if (rightDiagonal(board, place, 'X')) {
+            return true;
+        } else if (rowWise(board, place, 'X')) {
+            return true;
+        } else if (colWise(board, place, 'X')) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isAttack(char[][] board, int[][] place) {
+        if (isLeftDiagonal(board, place, '0')) {
+            return true;
+        } else if (rightDiagonal(board, place, '0')) {
+            return true;
+        } else if (rowWise(board, place, '0')) {
+            return true;
+        } else if (colWise(board, place, '0')) {
+            return true;
+        }
+        return false;
+    }
+
+    private static void ComputerMove(char[][] board) {
+        int place[][] = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+        if (isAttack(board, place)) {
+            // System.out.println("Attack");
+            return;
+        } else if (isDefend(board, place)) {
+            // System.out.println("Defend");
+            return;
+        }
+
+        ComputerRandMove(board);
+    }
+
+    private static void ComputerRandMove(char[][] board) {
+        Random rand = new Random();
+        int computerMove;
+        while (true) {
+            computerMove = rand.nextInt(9) + 1;
+            if (isValidMove(board, Integer.toString(computerMove))) {
+                break;
+            }
+        }
+        System.out.println("Random Move");
         System.out.println("Computer chooses " + computerMove);
         placeMove(board, Integer.toString(computerMove), '0');
     }
-    // private static void ComputerMove(char[][] board) {
-    //     Random rand = new Random();
-    //     int computerMove;
-    //     while (true) {
-    //         computerMove = rand.nextInt(9) + 1;
-    //         if (isValidMove(board, Integer.toString(computerMove))) {
-    //             break;
-    //         }
-    //     }
-    //     System.out.println("Computer chooses " + computerMove);
-    //     placeMove(board,Integer.toString(computerMove),'0');
-    // }
-    private static void placeMove(char[][] board,String position,char symbol){
+
+    private static void placeMove(char[][] board, String position, char symbol) {
         switch (position) {
             case "1":
                 board[0][0] = symbol;
@@ -120,6 +251,7 @@ public class MiniProject1 {
                 System.out.println("Not a Valid Move");
         }
     }
+
     private static boolean isValidMove(char[][] board, String Move) {
         switch (Move) {
             case "1":
@@ -144,20 +276,22 @@ public class MiniProject1 {
                 return false;
         }
     }
+
     private static void PlayerMove(char[][] board, Scanner sc) {
         String playerMove;
-        while(true){
+        while (true) {
             System.out.println();
             System.out.println("What's your move(1-9)");
             playerMove = sc.nextLine();
-            if(isValidMove(board, playerMove)){
+            if (isValidMove(board, playerMove)) {
                 break;
-            }else{
+            } else {
                 System.out.println("Not a Valid Move,Try again");
             }
         }
         placeMove(board, playerMove, 'X');
     }
+
     private static void printBoard(char[][] board) {
         System.out.print(board[0][0] + " | " + board[0][1] + " | " + board[0][2]);
         System.out.println();
