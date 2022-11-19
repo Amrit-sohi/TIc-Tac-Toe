@@ -200,7 +200,10 @@ public class MiniProject1 {
             // System.out.println("Defend");
             return;
         }
-
+        if(isValidMove(board, Integer.toString(5))){
+            placeMove(board, Integer.toString(5), '0');
+            return;
+        }
         ComputerRandMove(board);
     }
 
